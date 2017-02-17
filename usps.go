@@ -1,10 +1,11 @@
 package main
 
 import (
-	"github.com/PuerkitoBio/goquery"
 	"regexp"
 	"strings"
 	"time"
+
+	"github.com/PuerkitoBio/goquery"
 )
 
 // Usps USPS handler
@@ -73,7 +74,7 @@ func (c Usps) GetTracking(trackingNumber string) (Shipment, error) {
 		text := strings.TrimSpace(s.Text())
 		text = spaceRegexp.ReplaceAllString(text, " ")
 
-		if strings.Contains(text, "day, ") {
+		if shipment.DeliveryTimestamp == 0 && strings.Contains(text, "day, ") {
 
 			timeStr := text[strings.Index(text, ", ")+2:] + " , 12:00 am"
 			timeStamp, _ := time.Parse(timestampFormat, timeStr)

@@ -1,10 +1,11 @@
 package main
 
 import (
-	"github.com/PuerkitoBio/goquery"
 	"regexp"
 	"strings"
 	"time"
+
+	"github.com/PuerkitoBio/goquery"
 )
 
 // Ups UPS handler
@@ -79,7 +80,7 @@ func (c Ups) GetTracking(trackingNumber string) (Shipment, error) {
 		text := strings.TrimSpace(s.Text())
 		text = spaceRegexp.ReplaceAllString(text, " ")
 
-		if strings.Contains(text, "End of Day") {
+		if shipment.DeliveryTimestamp == 0 && strings.Contains(text, "day,") {
 			dateRegexp := regexp.MustCompile(`[0-9/]+`)
 			dateStr := dateRegexp.FindString(text)
 
