@@ -5,8 +5,6 @@ import (
 	"strings"
 	"time"
 
-	"fmt"
-
 	"github.com/PuerkitoBio/goquery"
 )
 
@@ -62,8 +60,6 @@ func (c Usps) GetTracking(trackingNumber string) (Shipment, error) {
 			}
 
 			timestamp, _ := time.ParseInLocation(timestampFormat, localTime, currentLocation)
-
-			fmt.Println(timestamp)
 
 			// put everything in status
 			status.Timestamp = timestamp.Unix()
