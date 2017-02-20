@@ -5,6 +5,8 @@ import (
 	"strings"
 	"time"
 
+	"fmt"
+
 	"github.com/PuerkitoBio/goquery"
 )
 
@@ -36,6 +38,8 @@ func (c Usps) GetTracking(trackingNumber string) (Shipment, error) {
 	spaceRegexp := regexp.MustCompile("[[:space:]]+")
 	timestampFormat := "January 2, 2006 , 3:04 pm"
 
+	currentLocation := time.Now().Location()
+
 	var location, localTime, desc string
 
 	doc.Find("#tc-hits .detail-wrapper td").Each(func(i int, s *goquery.Selection) {
@@ -57,7 +61,9 @@ func (c Usps) GetTracking(trackingNumber string) (Shipment, error) {
 				localTime += " , 12:00 am"
 			}
 
-			timestamp, _ := time.Parse(timestampFormat, localTime)
+			timestamp, _ := time.ParseInLocation(timestampFormat, localTime, currentLocation)
+
+			fmt.Println(timestamp)
 
 			// put everything in status
 			status.Timestamp = timestamp.Unix()
@@ -77,7 +83,7 @@ func (c Usps) GetTracking(trackingNumber string) (Shipment, error) {
 		if shipment.DeliveryTimestamp == 0 && strings.Contains(text, "day, ") {
 
 			timeStr := text[strings.Index(text, ", ")+2:] + " , 12:00 am"
-			timeStamp, _ := time.Parse(timestampFormat, timeStr)
+			timeStamp, _ := time.ParseInLocation(timestampFormat, timeStr, currentLocation)
 
 			shipment.DeliveryTimestamp = timeStamp.Unix()
 		}

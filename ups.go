@@ -36,6 +36,8 @@ func (c Ups) GetTracking(trackingNumber string) (Shipment, error) {
 	spaceRegexp := regexp.MustCompile("[[:space:]]+")
 	timestampFormat := "01/02/2006 3:04 PM"
 
+	currentLocation := time.Now().Location()
+
 	var location, localTime, description string
 
 	// find statuses
@@ -62,7 +64,7 @@ func (c Ups) GetTracking(trackingNumber string) (Shipment, error) {
 
 			// parse time and convert to unixtime
 			localTime = strings.Replace(localTime, ".", "", -1) // A.M. to AM
-			timestamp, _ := time.Parse(timestampFormat, localTime)
+			timestamp, _ := time.ParseInLocation(timestampFormat, localTime, currentLocation)
 
 			// put everything in status
 			status.Timestamp = timestamp.Unix()
@@ -84,7 +86,7 @@ func (c Ups) GetTracking(trackingNumber string) (Shipment, error) {
 			dateRegexp := regexp.MustCompile(`[0-9/]+`)
 			dateStr := dateRegexp.FindString(text)
 
-			timestamp, _ := time.Parse(timestampFormat, dateStr+" 00:00 AM")
+			timestamp, _ := time.ParseInLocation(timestampFormat, dateStr+" 00:00 AM", currentLocation)
 			shipment.DeliveryTimestamp = timestamp.Unix()
 		}
 	})
