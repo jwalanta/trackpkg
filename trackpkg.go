@@ -16,7 +16,7 @@ var supportedCarriers = []Carrier{Fedex{}, Ups{}, Usps{}}
 
 var repository = ShipmentsRepository{Path: trackingRepoPath}
 
-var commands = []cli.Command{
+var commands = []*cli.Command{
 	{
 		Name:         "add",
 		Usage:        "adds new tracking number",
